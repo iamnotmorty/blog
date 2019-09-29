@@ -23,9 +23,9 @@
 # Internal static
 #---------------------------
 
-internal_js: /blog/js
-internal_css: /blog/css
-internal_img: /blog/img
+internal_js: /js
+internal_css: /css
+internal_img: /img
 
 
 #---------------------------
@@ -33,26 +33,26 @@ internal_img: /blog/img
 # Third-party library
 #---------------------------
 
-anchor: /blog/lib/anchor
+anchor: /lib/anchor
 
-font_awesome: /blog/lib/font-awesome
+font_awesome: /lib/font-awesome
 
-github_markdown: /blog/lib/github-markdown
+github_markdown: /lib/github-markdown
 
-jquery: /blog/lib/jquery
+jquery: /lib/jquery
 
-bootstrap: /blog/lib/bootstrap
+bootstrap: /lib/bootstrap
 
-mdbootstrap: /blog/lib/mdbootstrap
+mdbootstrap: /lib/mdbootstrap
 
 # umd
-popper: /blog/lib/popper
+popper: /lib/popper
 
-prettify: /blog/lib/prettify
+prettify: /lib/prettify
 # 高亮主题的路径，只支持 min.css，文件名需要与 _config.highlight.theme 对应
 # the path of highlight theme, only support `min.css` file，filename need to be the same as _config.highlight.theme
-prettify_theme: /blog/lib/prettify
+prettify_theme: /lib/prettify
 
-tocbot: /blog/lib/tocbot
+tocbot: /lib/tocbot
 
-typed: /blog/lib/typed
+typed: /lib/typed
