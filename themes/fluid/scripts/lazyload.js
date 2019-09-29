@@ -17,7 +17,7 @@ module.exports.lazyload = function (hexo) {
 };
 
 function lazyProcess(htmlContent) {
-  let loadingImage = '/img/loading.gif';
+  let loadingImage = '/blog/img/loading.gif';
   return htmlContent.replace(/<img(\s*?)src="(.*?)"(.*?)>/gi, (str, p1, p2) => {
     if (/srcset=/gi.test(str)) {
       return str;
