@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>使用travis ci持续集成hexo博客，实现自动化部署github pages</title>
+    <link href="undefined2019/09/29/hexo-travis/"/>
+    <url>2019/09/29/hexo-travis/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Travis CI</tag>
+      
+      <tag>Hexo</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="undefined2019/09/29/hello-world/"/>
+    <url>2019/09/29/hello-world/</url>
+    
+    <content type="html"><![CDATA[<p>未雨绸缪，富有耐心，律己严格，不偏不倚。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
