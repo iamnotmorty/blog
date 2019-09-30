@@ -14,7 +14,7 @@
   <meta name="description" content>
   <meta name="author" content="Johnny">
   <meta name="keywords" content>
-  <title>java_offer01 ~ Blogee</title>
+  <title>Java面试题-基础 ~ Blogee</title>
   <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
   <link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css">
@@ -123,7 +123,9 @@
       <div class="py-5 z-depth-3" id="board">
         <div class="post-content mx-auto">
           <div class="markdown-body">
-            <h2 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h2><h3 id="1-JDK和JRE有什么区别？"><a href="#1-JDK和JRE有什么区别？" class="headerlink" title="1.JDK和JRE有什么区别？"></a>1.JDK和JRE有什么区别？</h3><ul>
+            <p>第一部分，Java基础题目，共17粒。附带常量池和堆内存简介。</p>
+<a id="more"></a>
+<h2 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h2><h3 id="1-JDK和JRE有什么区别？"><a href="#1-JDK和JRE有什么区别？" class="headerlink" title="1.JDK和JRE有什么区别？"></a>1.JDK和JRE有什么区别？</h3><ul>
 <li>JDK：Java Development Kit 的简称，java 开发工具包，提供了 java 的开发环境和运行环境。</li>
 <li>JRE：Java Runtime Environment 的简称，java 运行环境，为 java 的运行提供了所需环境。</li>
 </ul>
@@ -138,8 +140,11 @@
 <h3 id="4-final-在-java-中有什么作用？"><a href="#4-final-在-java-中有什么作用？" class="headerlink" title="4.final 在 java 中有什么作用？"></a>4.final 在 java 中有什么作用？</h3><ul>
 <li>final 修饰的类叫最终类，该类不能被继承。</li>
 <li>final 修饰的方法不能被重写。</li>
-<li>final 修饰的变量叫常量，常量必须初始化，初始化之后值就不能被修改。<h3 id="5-java-中的-Math-round-1-5-等于多少？"><a href="#5-java-中的-Math-round-1-5-等于多少？" class="headerlink" title="5.java 中的 Math.round(-1.5) 等于多少？"></a>5.java 中的 Math.round(-1.5) 等于多少？</h3>等于 -1，因为在数轴上取值时，中间值（0.5）向右取整，所以正 0.5 是往上取整，负 0.5 是直接舍弃。<h3 id="6-String-属于基础的数据类型吗？"><a href="#6-String-属于基础的数据类型吗？" class="headerlink" title="6.String 属于基础的数据类型吗？"></a>6.String 属于基础的数据类型吗？</h3>String 不属于基础类型，基础类型有 8 种：byte、boolean、char、short、int、float、long、double，而 String 属于对象。<h3 id="7-java-中操作字符串都有哪些类？它们之间有什么区别？"><a href="#7-java-中操作字符串都有哪些类？它们之间有什么区别？" class="headerlink" title="7.java 中操作字符串都有哪些类？它们之间有什么区别？"></a>7.java 中操作字符串都有哪些类？它们之间有什么区别？</h3>操作字符串的类有：String、StringBuffer、StringBuilder。</li>
+<li>final 修饰的变量叫常量，常量必须初始化，初始化之后值就不能被修改。</li>
 </ul>
+<h3 id="5-java-中的-Math-round-1-5-等于多少？"><a href="#5-java-中的-Math-round-1-5-等于多少？" class="headerlink" title="5.java 中的 Math.round(-1.5) 等于多少？"></a>5.java 中的 Math.round(-1.5) 等于多少？</h3><p>等于 -1，因为在数轴上取值时，中间值（0.5）向右取整，所以正 0.5 是往上取整，负 0.5 是直接舍弃。</p>
+<h3 id="6-String-属于基础的数据类型吗？"><a href="#6-String-属于基础的数据类型吗？" class="headerlink" title="6.String 属于基础的数据类型吗？"></a>6.String 属于基础的数据类型吗？</h3><p>String 不属于基础类型，基础类型有 8 种：byte、boolean、char、short、int、float、long、double，而 String 属于对象。</p>
+<h3 id="7-java-中操作字符串都有哪些类？它们之间有什么区别？"><a href="#7-java-中操作字符串都有哪些类？它们之间有什么区别？" class="headerlink" title="7.java 中操作字符串都有哪些类？它们之间有什么区别？"></a>7.java 中操作字符串都有哪些类？它们之间有什么区别？</h3><p>操作字符串的类有：String、StringBuffer、StringBuilder。</p>
 <p>String 和 StringBuffer、StringBuilder 的区别在于 String 声明的是不可变的对象，每次操作都会生成新的 String 对象，然后将指针指向新的 String 对象，而 StringBuffer、StringBuilder 可以在原有对象的基础上进行操作，所以在经常改变字符串内容的情况下最好不要使用 String。</p>
 <p>StringBuffer 和 StringBuilder 最大的区别在于，StringBuffer 是线程安全的，而 StringBuilder 是非线程安全的，但 StringBuilder 的性能却高于 StringBuffer，所以在单线程环境下推荐使用 StringBuilder，多线程环境下推荐使用 StringBuffer。</p>
 <h3 id="8-String-str-”i”与-String-str-new-String-“i”-一样吗？"><a href="#8-String-str-”i”与-String-str-new-String-“i”-一样吗？" class="headerlink" title="8.String str=”i”与 String str=new String(“i”)一样吗？"></a>8.String str=”i”与 String str=new String(“i”)一样吗？</h3><p>不一样，因为内存的分配方式不一样。String str=”i”的方式，java 虚拟机会将其分配到常量池中；而 String str=new String(“i”) 则会被分到堆内存中。</p>
@@ -164,21 +169,30 @@ System.out.println(stringBuilder.reverse()); // gfedcba</code></pre>
 <li>toLowerCase()：将字符串转成小写字母。</li>
 <li>toUpperCase()：将字符串转成大写字符。</li>
 <li>substring()：截取字符串。</li>
-<li>equals()：字符串比较。<h3 id="11-抽象类必须要有抽象方法吗？"><a href="#11-抽象类必须要有抽象方法吗？" class="headerlink" title="11.抽象类必须要有抽象方法吗？"></a>11.抽象类必须要有抽象方法吗？</h3>不需要，抽象类不一定非要有抽象方法。<h3 id="12-普通类和抽象类有哪些区别？"><a href="#12-普通类和抽象类有哪些区别？" class="headerlink" title="12.普通类和抽象类有哪些区别？"></a>12.普通类和抽象类有哪些区别？</h3></li>
+<li>equals()：字符串比较。</li>
+</ul>
+<h3 id="11-抽象类必须要有抽象方法吗？"><a href="#11-抽象类必须要有抽象方法吗？" class="headerlink" title="11.抽象类必须要有抽象方法吗？"></a>11.抽象类必须要有抽象方法吗？</h3><p>不需要，抽象类不一定非要有抽象方法。</p>
+<h3 id="12-普通类和抽象类有哪些区别？"><a href="#12-普通类和抽象类有哪些区别？" class="headerlink" title="12.普通类和抽象类有哪些区别？"></a>12.普通类和抽象类有哪些区别？</h3><ul>
 <li>普通类不能包含抽象方法，抽象类可以包含抽象方法。</li>
-<li>抽象类不能直接实例化，普通类可以直接实例化。<h3 id="13-抽象类能使用-final-修饰吗？"><a href="#13-抽象类能使用-final-修饰吗？" class="headerlink" title="13.抽象类能使用 final 修饰吗？"></a>13.抽象类能使用 final 修饰吗？</h3>不能，定义抽象类就是让其他类继承的，如果定义为 final 该类就不能被继承，这样彼此就会产生矛盾，所以 final 不能修饰抽象类，如下图所示，编辑器也会提示错误信息。<h3 id="14-接口和抽象类有什么区别？"><a href="#14-接口和抽象类有什么区别？" class="headerlink" title="14.接口和抽象类有什么区别？"></a>14.接口和抽象类有什么区别？</h3></li>
+<li>抽象类不能直接实例化，普通类可以直接实例化。</li>
+</ul>
+<h3 id="13-抽象类能使用-final-修饰吗？"><a href="#13-抽象类能使用-final-修饰吗？" class="headerlink" title="13.抽象类能使用 final 修饰吗？"></a>13.抽象类能使用 final 修饰吗？</h3><p>不能，定义抽象类就是让其他类继承的，如果定义为 final 该类就不能被继承，这样彼此就会产生矛盾，所以 final 不能修饰抽象类，如下图所示，编辑器也会提示错误信息。</p>
+<h3 id="14-接口和抽象类有什么区别？"><a href="#14-接口和抽象类有什么区别？" class="headerlink" title="14.接口和抽象类有什么区别？"></a>14.接口和抽象类有什么区别？</h3><ul>
 <li>实现：抽象类的子类使用 extends 来继承；接口必须使用 implements 来实现接口。</li>
 <li>构造函数：抽象类可以有构造函数；接口不能有。</li>
 <li>main 方法：抽象类可以有 main 方法，并且我们能运行它；接口不能有 main 方法。</li>
 <li>实现数量：类可以实现很多个接口；但是只能继承一个抽象类。</li>
-<li>访问修饰符：接口中的方法默认使用 public 修饰；抽象类中的方法可以是任意访问修饰符。<h3 id="15-java-中-IO-流分为几种？"><a href="#15-java-中-IO-流分为几种？" class="headerlink" title="15.java 中 IO 流分为几种？"></a>15.java 中 IO 流分为几种？</h3>按功能来分：输入流（input）、输出流（output）。</li>
+<li>访问修饰符：接口中的方法默认使用 public 修饰；抽象类中的方法可以是任意访问修饰符。</li>
 </ul>
+<h3 id="15-java-中-IO-流分为几种？"><a href="#15-java-中-IO-流分为几种？" class="headerlink" title="15.java 中 IO 流分为几种？"></a>15.java 中 IO 流分为几种？</h3><p>按功能来分：输入流（input）、输出流（output）。</p>
 <p>按类型来分：字节流和字符流。</p>
 <p>字节流和字符流的区别是：字节流按 8 位传输以字节为单位输入输出数据，字符流按 16 位传输以字符为单位输入输出数据。</p>
 <h3 id="16-BIO、NIO、AIO-有什么区别？"><a href="#16-BIO、NIO、AIO-有什么区别？" class="headerlink" title="16.BIO、NIO、AIO 有什么区别？"></a>16.BIO、NIO、AIO 有什么区别？</h3><ul>
 <li>BIO：Block IO 同步阻塞式 IO，就是我们平常使用的传统 IO，它的特点是模式简单使用方便，并发处理能力低。</li>
 <li>NIO：New IO 同步非阻塞 IO，是传统 IO 的升级，客户端和服务器端通过 Channel（通道）通讯，实现了多路复用。</li>
-<li>AIO：Asynchronous IO 是 NIO 的升级，也叫 NIO2，实现了异步非堵塞 IO ，异步 IO 的操作基于事件和回调机制。<h3 id="17-Files的常用方法都有哪些？"><a href="#17-Files的常用方法都有哪些？" class="headerlink" title="17.Files的常用方法都有哪些？"></a>17.Files的常用方法都有哪些？</h3></li>
+<li>AIO：Asynchronous IO 是 NIO 的升级，也叫 NIO2，实现了异步非堵塞 IO ，异步 IO 的操作基于事件和回调机制。</li>
+</ul>
+<h3 id="17-Files的常用方法都有哪些？"><a href="#17-Files的常用方法都有哪些？" class="headerlink" title="17.Files的常用方法都有哪些？"></a>17.Files的常用方法都有哪些？</h3><ul>
 <li>Files.exists()：检测文件路径是否存在。</li>
 <li>Files.createFile()：创建文件。</li>
 <li>Files.createDirectory()：创建文件夹。</li>
@@ -189,18 +203,38 @@ System.out.println(stringBuilder.reverse()); // gfedcba</code></pre>
 <li>Files.read()：读取文件。</li>
 <li>Files.write()：写入文件。</li>
 </ul>
+<hr>
+<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><h4 id="说说对常量池对理解"><a href="#说说对常量池对理解" class="headerlink" title="说说对常量池对理解"></a>说说对常量池对理解</h4><p>常量池有两种，一种是编译阶段生成的在 *.class 文件中的常量池(Constant Pool)。另一种是运行时在方法区中的运行时常量池(Runtime Constant Pool)。</p>
+<ul>
+<li><p>在 *.class 文件中，最头的4个字节用于存储魔数(Magic Number)，用于确定一个文件是否能被JVM接受，再接着4个字节用于存储版本号，前2个字节存储次版本号，后2个存储主版本号，再接着是用于存放常量的常量池，由于常量的数量是不固定的，所以常量池的入口放置一个U2类型的数据(constant_pool_count)存储常量池容量计数值。<br>常量池主要用于存放两大类常量：字面量(Literal)和符号引用量(Symbolic References)，字面量相当于Java语言层面常量的概念，如文本字符串，声明为final的常量值等，符号引用则属于编译原理方面的概念，包括了如下三种类型的常量：类和接口的全限定名;字段名称和描述符;方法名称和描述符.</p>
+</li>
+<li><p>运行时常量池是方法区的一部分。*.cLass 文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法区的运行时常量池中存放。</p>
+</li>
+</ul>
+<p>运行时常量池相对于 *.class 文件中的常量池的另外一个重要特征是具备动态性，Java语言并不要求常量一定只有编译期才能产生，也就是并非预置入 *.class 文件中的常量池的内容才能进入方法区的运行时常量池，运行期间也可能将新的常量放入池中，这种特性被开发人员利用比较多的就是String类的intern()方法。</p>
+<p>常量池的作用：<br>常量池是为了避免频繁的创建和销毁对象而影响系统性能，其实现了对象的共享。<br>例如字符串常量池，在编译阶段就把所有的字符串文字放到一个常量池中。<br>（1）节省内存空间：常量池中所有相同的字符串常量被合并，只占用一个空间。<br>（2）节省运行时间：比较字符串时，==比equals()快。对于两个引用变量，只用==判断引用是否相等，也就可以判断实际值是否相等。</p>
+<h4 id="说说什么是堆内存"><a href="#说说什么是堆内存" class="headerlink" title="说说什么是堆内存"></a>说说什么是堆内存</h4><ul>
+<li>是被线程共享的一块内存区域，创建的对象和数组都保存在 Java 堆内存中，也是垃圾收集器进行 垃圾收集的最重要的内存区域。由于现代 VM 采用分代收集算法, 因此 Java 堆从 GC 的角度还可以 细分为: 新生代(Eden 区、From Survivor 区和 To Survivor 区)和老年代。</li>
+</ul>
+<p>这里又涉及到 GC 相关的内容。一个点一个的深挖下去都是一片汪洋。</p>
 
             <hr>
           </div>
           <br>
           <div>
             
+              <p>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Java%E9%9D%A2%E8%AF%95%E9%A2%98">Java面试题</a>
+                  &nbsp;
+                
+              </p>
+            
             <p>
               <i class="iconfont icon-tag"></i>
               
                 <a class="hover-with-bg" href="/tags/Java">Java</a>
-              
-                <a class="hover-with-bg" href="/tags/Java%E9%9D%A2%E8%AF%95%E9%A2%98">Java面试题</a>
               
             </p>
             
@@ -304,7 +338,7 @@ System.out.println(stringBuilder.reverse()); // gfedcba</code></pre>
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "java_offer01&nbsp;",
+        "Java面试题-基础&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
