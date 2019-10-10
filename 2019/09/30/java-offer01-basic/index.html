@@ -204,7 +204,7 @@ System.out.println(stringBuilder.reverse()); // gfedcba</code></pre>
 <li>Files.write()：写入文件。</li>
 </ul>
 <hr>
-<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><h4 id="说说对常量池对理解"><a href="#说说对常量池对理解" class="headerlink" title="说说对常量池对理解"></a>说说对常量池对理解</h4><p>常量池有两种，一种是编译阶段生成的在 *.class 文件中的常量池(Constant Pool)。另一种是运行时在方法区中的运行时常量池(Runtime Constant Pool)。</p>
+<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><h4 id="说说对常量池对理解"><a href="#说说对常量池对理解" class="headerlink" title="说说对常量池对理解"></a>说说对常量池对理解</h4><p>常量池有两种，一种是编译阶段生成的在 *.class 文件中的常量池(Constant Pool Table)。另一种是运行时在方法区中的运行时常量池(Runtime Constant Pool)。</p>
 <ul>
 <li><p>在 *.class 文件中，最头的4个字节用于存储魔数(Magic Number)，用于确定一个文件是否能被JVM接受，再接着4个字节用于存储版本号，前2个字节存储次版本号，后2个存储主版本号，再接着是用于存放常量的常量池，由于常量的数量是不固定的，所以常量池的入口放置一个U2类型的数据(constant_pool_count)存储常量池容量计数值。<br>常量池主要用于存放两大类常量：字面量(Literal)和符号引用量(Symbolic References)，字面量相当于Java语言层面常量的概念，如文本字符串，声明为final的常量值等，符号引用则属于编译原理方面的概念，包括了如下三种类型的常量：类和接口的全限定名;字段名称和描述符;方法名称和描述符.</p>
 </li>
