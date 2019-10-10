@@ -8,6 +8,7 @@ categories:
 - Java知识体系
 index_img: https://s2.ax1x.com/2019/10/09/u48t4H.jpg
 ---
+简单介绍一下JVM内存的各个区域
 <!--more-->
 ## JVM内存区域
 JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区 域【JAVA 堆、方法区】、直接内存（不受JVM GC管理）。
