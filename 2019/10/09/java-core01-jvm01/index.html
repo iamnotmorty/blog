@@ -123,7 +123,8 @@
       <div class="py-5 z-depth-3" id="board">
         <div class="post-content mx-auto">
           <div class="markdown-body">
-            <a id="more"></a>
+            <p>简单介绍一下JVM内存的各个区域</p>
+<a id="more"></a>
 <h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区 域【JAVA 堆、方法区】、直接内存（不受JVM GC管理）。</p>
 <h3 id="线程私有数据区域"><a href="#线程私有数据区域" class="headerlink" title="线程私有数据区域"></a>线程私有数据区域</h3><p>线程私有数据区域生命周期与线程相同, 依赖用户线程的 启动/结束 而 创建/销毁(在 Hotspot VM 内, 每个线程都与操作系统的本地线程直接映射, 因此这部分内存区域的存/否跟随本地线程的 生/死对应)。</p>
 <h3 id="线程共享数据区域"><a href="#线程共享数据区域" class="headerlink" title="线程共享数据区域"></a>线程共享数据区域</h3><p>线程共享区域随虚拟机的启动/关闭而创建/销毁。</p>

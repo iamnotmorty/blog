@@ -139,15 +139,10 @@
         
         
           
+          
         
-        <div class="index-excerpt" >
-          <div class="index-text mb-1">
-JVM内存区域JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区 域【JAVA 堆、方法区】、直接内存（不受JVM GC管理）。
-线程私有数据区域线程私有数据区域生命周期与线程相同, 依赖用户线程的 启动/结束 而 创建/销毁(在 Hotspot VM 内, 每个线程都与操作系统的本地线程直接映射, 因此这部分内存区域的存/否跟随本地线程的 生/死对应)。
-线程共享数据区域线程共享区域随虚拟机的启动/关闭而创建/销毁。
-直接内存直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用: 在 JDK 1.4 引入的 NIO 提 供了基于 Channel 与 Buffer 的 IO 方式, 它可以使用 Native 函数库直接分配堆外内存, 然后使用 DirectByteBuffer 对象作为这块内存的引用进行操作(详见: Java I/O 扩展), 这样就避免了在 Java 堆和 Native 堆中来回复制数据, 因此在一些场景中可以显著提高性能。
-
-程序计数器(线程私有)一块较小的内存空间, 是当前线程所执行的字节码的行号指示器，每条线程都</div>
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">简单介绍一下JVM内存的各个区域...</div>
         </div>
       </a>
 
