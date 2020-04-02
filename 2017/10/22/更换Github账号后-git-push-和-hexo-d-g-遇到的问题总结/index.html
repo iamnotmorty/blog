@@ -14,7 +14,7 @@
   <meta name="description" content>
   <meta name="author" content="Johnny">
   <meta name="keywords" content>
-  <title>标签 ~ Boogie</title>
+  <title>更换Github账号后&#39;git push&#39;和&#39;hexo d -g&#39;遇到的问题总结 ~ Boogie</title>
   <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
   <link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css">
@@ -30,7 +30,7 @@
 
 
 <body>
-  <header style="height: 80vh;">
+  <header style="height: 70vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -101,6 +101,9 @@
             </span>
 
             
+              <br>
+              <p>星期日, 十月 22日 2017, 9:55 上午</p>
+            
           </div>
 
           
@@ -111,22 +114,104 @@
 
   <main>
     
-      <div class="container nopadding-md">
-        <div class="py-5 z-depth-3" id="board">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center tagcloud">
-  <a href="/blog/tags/Github/" style="font-size: 15px; color: #bbe">Github</a> <a href="/blog/tags/Hexo/" style="font-size: 18.75px; color: #99abe0">Hexo</a> <a href="/blog/tags/JVM/" style="font-size: 15px; color: #bbe">JVM</a> <a href="/blog/tags/Java/" style="font-size: 30px; color: #337ab7">Java</a> <a href="/blog/tags/JavaScript/" style="font-size: 22.5px; color: #779bd3">JavaScript</a> <a href="/blog/tags/OOP/" style="font-size: 26.25px; color: #558ac5">OOP</a> <a href="/blog/tags/Travis-CI/" style="font-size: 15px; color: #bbe">Travis CI</a> <a href="/blog/tags/git/" style="font-size: 15px; color: #bbe">git</a> <a href="/blog/tags/实际开发过程遇到的问题/" style="font-size: 15px; color: #bbe">实际开发过程遇到的问题</a>
-</div>
-              </div>
-            </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto">
+          <div class="markdown-body">
+            <p>遇到问题多思考，多用搜索引擎，问题总归会解决的，不要轻易放弃</p>
+<a id="more"></a>
+<h2 id="问题起因"><a href="#问题起因" class="headerlink" title="问题起因"></a>问题起因</h2><p>由于之前Github账号过于随便的问题，重新注册了Github账号。</p>
+<h2 id="场景回顾"><a href="#场景回顾" class="headerlink" title="场景回顾"></a>场景回顾</h2><p>既然账号都换了，那就博客也重新来吧，之前的反正也是测试用的。<br>于是乎，做好所有准备工作，开干。</p>
+<pre><code class="bush">$ git config --global user.name &quot;xxx&quot; 
+$ git config --global user.email &quot;xxxx@xxx.com&quot;</code></pre>
+<p>正常</p>
+<hr>
+<p>查看git配置</p>
+<pre><code class="bush">$ git config --lis</code></pre>
+<p>好像也没有问题</p>
+<hr>
+<p>生成SSH密钥</p>
+<pre><code class="bush">$ ssh-keygen -t rsa -C &quot;xxxxx@xxx.com&quot;</code></pre>
+<p>生成密钥</p>
+<pre><code class="bush">$ cat ~/.ssh/id_rsa.pub</code></pre>
+<p>出现</p>
+<pre><code class="bush">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJPPudl9XqGxHvhs144OIIigWTy3MHD9jkM4bMm7HROEhj/qPUsin/td/YcsXx2HQI4JWTWmQwWD6YqlCx/rwltsYFkmm7OoNqe6kmnt
+5QRyWyUHX0EAFb/jz7rhA4+B0INHlcIfWlEI8ccnz28UFTwdHbx8JDWOn86ex/nNshDbz+Okc9LREKHt7uamo7WFCO30iCAKQY1bfvqOckTpNnQbFetl+8IJOCa/+q4ISghMB8GzAvdYw5
+e/SnJPDgMmjx8WO1FBhcpG2eiP4ij1kxeR01zl4B3EXG1o9vtWFXmNYTH7Y64b0tlkynCK1N/DIn9+iQ7wVEJg7AyvUpBhdz xxxxxxxx@xx.com</code></pre>
+<p>让后把这段内容复制进Github里相应位置</p>
+<hr>
+<p>然后测试有没有链接成功</p>
+<pre><code class="bush">$ ssh git@github.com</code></pre>
+<p>根据输出的内容发现好像也成功了</p>
+<h4 id="至此一切正常"><a href="#至此一切正常" class="headerlink" title="至此一切正常"></a>至此一切正常</h4><hr>
+<p>最后省略Hexo的相关操作，假设你也都已经完成，来到最后一步发布</p>
+<pre><code class="bush">$ hexo d -g </code></pre>
+<p>出人意料的出现一大串的内容，当然是报错了。其中包含关键的一段</p>
+<pre><code class="bush">remote: Permission to new-name/practice.git denied to old-name.
+fatal: unable to access &#39;https://github.com/new-name/origin.git/&#39;: The requested URL returned error: 403</code></pre>
+<p>然后也是各种Goole各种百度，就是没有找到相关的解决办法，乱试一通结果还是不行，包括Github官方给出的解答，好像也没有解决问题，最后功夫不负有心人，我翻到一篇博客，看了一下，大概是本地凭证的问题，我受挫的小心脏那么一琢磨，哎呀，好像有点对路。试试把</p>
+<blockquote>
+<p>控制面板-用户账户-凭据管理器-Windows凭据</p>
+</blockquote>
+<h4 id="可以看到-git-https-github-com"><a href="#可以看到-git-https-github-com" class="headerlink" title="可以看到 git:https://github.com"></a>可以看到 git:<a href="https://github.com" target="_blank" rel="noopener">https://github.com</a></h4><h4 id="点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了"><a href="#点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了" class="headerlink" title="点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了"></a>点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了</h4><hr>
+<p>最后再次执行 hexo d -g 就成功了，同样的也解决了git push失败的问题。</p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            
+              <p>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93">问题总结</a>
+                  &nbsp;
+                
+              </p>
+            
+            <p>
+              <i class="iconfont icon-tag"></i>
+              
+                <a class="hover-with-bg" href="/tags/Hexo">Hexo</a>
+              
+                <a class="hover-with-bg" href="/tags/Github">Github</a>
+              
+                <a class="hover-with-bg" href="/tags/git">git</a>
+              
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
           </div>
         </div>
       </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;目录</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
     
   </main>
 
@@ -180,6 +265,11 @@
   <script src="/blog/js/lazyload.js" ></script>
 
 
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
 
   <script src="/blog/lib/prettify/prettify.min.js" ></script>
   <script>
@@ -195,7 +285,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "标签&nbsp;",
+        "更换Github账号后'git push'和'hexo d -g'遇到的问题总结&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

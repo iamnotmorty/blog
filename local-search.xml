@@ -152,5 +152,237 @@
   
   
   
+  <entry>
+    <title>使用POI读取Excel数据踩坑记</title>
+    <link href="undefined2019/05/12/%E4%BD%BF%E7%94%A8POI%E8%AF%BB%E5%8F%96Excel%E6%95%B0%E6%8D%AE%E8%B8%A9%E5%9D%91%E8%AE%B0/"/>
+    <url>2019/05/12/%E4%BD%BF%E7%94%A8POI%E8%AF%BB%E5%8F%96Excel%E6%95%B0%E6%8D%AE%E8%B8%A9%E5%9D%91%E8%AE%B0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-Boot项目使用Apache-POI读取Excel文件数据"><a href="#Spring-Boot项目使用Apache-POI读取Excel文件数据" class="headerlink" title="Spring Boot项目使用Apache POI读取Excel文件数据"></a>Spring Boot项目使用Apache POI读取Excel文件数据</h1><a id="more"></a><hr><h2 id="第一、导入依赖"><a href="#第一、导入依赖" class="headerlink" title="第一、导入依赖"></a>第一、导入依赖</h2><pre><code class="xml">      &lt;dependency&gt;        &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;        &lt;artifactId&gt;poi&lt;/artifactId&gt;        &lt;version&gt;4.0.1&lt;/version&gt;      &lt;/dependency&gt;</code></pre><p>这里有一个地方需要注意，这个包只能支持xls格式的Excel文件。但是2003年以后，我们现在常用的格式是xlsx格式的文件。所以要正常使用的话还需导入另一个依赖。</p><pre><code class="xml">    &lt;dependency&gt;      &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;      &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;      &lt;version&gt;4.0.1&lt;/version&gt;    &lt;/dependency&gt;</code></pre><p>导入这两个依赖以后就可以使用POI相关的API了。</p><h2 id="第二、使用"><a href="#第二、使用" class="headerlink" title="第二、使用"></a>第二、使用</h2><p>直接上代码</p><pre><code class="java">@RequestController@RequestMapping(&quot;/file&quot;)public class Controller {    @PostMapping(&quot;/parse.json&quot;)    /**这里直接返回为空（根据需求），关键是里面的代码不是返回什么。    *用@RequestParam注解接收参数，对象为    *org.springframework.web.multipart.MultipartFile    */    public void parse(@RequestParam MultipartFile file) {        //检查文件        checkFile(file);        //获取workbook对象        Workbook workbook = getWorkBook(file);        //获取sheet对象        Sheet sheet = workbook.getSheetAt(0);        for (Row row : sheet) {            if (row.getRowNum() == 0) {                continue;            }            //在这里就可以获取cell对象，从而读取Excel的数据了            Cell cell = row.getCell(0);            //cell.getStringCellValue();            //cell.getNumericCellValue();            //...等等方法        }    }    public static void checkFile(MultipartFile file) throws IOException {        //判断文件是否存在        if (null == file) {            logger.error(&quot;文件不存在！&quot;);            throw new FileNotFoundException(&quot;文件不存在！&quot;);        }        //获得文件名        String fileName = file.getOriginalFilename();        //判断文件是否是excel文件        if (!fileName.endsWith(&quot;xls&quot;) &amp;&amp; !fileName.endsWith(&quot;xlsx&quot;)) {            logger.error(fileName + &quot;不是excel文件&quot;);            throw new IOException(fileName + &quot;不是excel文件&quot;);        }    }    public static Workbook getWorkbook(MultipartFile file) {        //获得文件名        String fileName = file.getOriginalFilename();        //创建Workbook工作薄对象，表示整个excel        Workbook workbook = null;        try {            //获取excel文件的io流            InputStream is = file.getInputStream();            //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象            if (fileName.endsWith(&quot;xls&quot;)) {                //2003                workbook = new HSSFWorkbook(is);            } else if (fileName.endsWith(&quot;xlsx&quot;)) {                //2007                workbook = new XSSFWorkbook(is);            }        } catch (IOException e) {            logger.info(e.getMessage());        }        return workbook;    }}</code></pre><p>大致过程是这样，具体有些还需要根据场景</p><h2 id="第三、遇到的坑"><a href="#第三、遇到的坑" class="headerlink" title="第三、遇到的坑"></a>第三、遇到的坑</h2><h3 id="（一）getLastRowNum-方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows-获取的是n行。注：标题行会忽略"><a href="#（一）getLastRowNum-方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows-获取的是n行。注：标题行会忽略" class="headerlink" title="（一）getLastRowNum()方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows()获取的是n行。注：标题行会忽略"></a>（一）getLastRowNum()方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows()获取的是n行。注：标题行会忽略</h3><h3 id="（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。"><a href="#（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。" class="headerlink" title="（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。"></a>（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。</h3><h3 id="（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。"><a href="#（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。" class="headerlink" title="（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。"></a>（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。</h3>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>实际开发过程遇到的问题</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Java--向上转型</title>
+    <link href="undefined2017/11/27/Java-%E5%90%91%E4%B8%8A%E8%BD%AC%E5%9E%8B/"/>
+    <url>2017/11/27/Java-%E5%90%91%E4%B8%8A%E8%BD%AC%E5%9E%8B/</url>
+    
+    <content type="html"><![CDATA[<p>要把OOP思想彻底了然于心，还有很长的路要走。今天被问了一个问题，用语言来描述就是，用向上转型和不用向上转型有什么区别。<br>具体代码如下：</p><pre><code class="java">//使用向上转型EmployeeDao employeeDao = new EmployeeDaoImpl();//不使用向上转型EmployeeDaoImpl employeeDao1 = new EmployeeDaoImpl();</code></pre><a id="more"></a><p>两者唯一的区别就是，前者用接口类型对象指向实现类实例对象的引用，后者类型同意，创建一个实现类的实例对象。<br>那这两种写法到底有什么区别呢？  </p><p>设想一个场景，我们要调用很多employeeDao1对象的方法，于是就会写大量的</p><pre><code class="java">employeeDao1.getByName();employeeDao1.getByID();employeeDao1.add();employeeDao1.delete();employeeDao1.update();employeeDao1.show();.....</code></pre><p>此时我们的老板突然说我们数据库不用MySQL，改用Oracle，这个时候我们就要修改实现类里面实现方法的代码。当然有点基础的人都知道，如果不涉及方法的增加和改变，并且EmployeeDao接口里面一般是不做改变的。但是会发现在这种情况下，好像也并不用修改很多。那么来看，这时候针对不同的客户要求，有家要MySQL，有家要Oracle。就要新增加一个针对Oracle的实现类，比如叫EmployeeDaoImplForO</p><pre><code class="java">EmployeeDaoImplForO edifo = new EmployeeDaoImplForO();//这个时候就要修改之前的所有的employeeDao1为edifo，修改量非常的大。//但是使用接口类型去调用方法则完全不同，这样就不需要去关注实现类了，直接拿过来new一个实现类给接口类型对象，下面的代码就不需要修改。</code></pre><p>不过这种思想在这个例子下不是特别明显，因为可以把对象名称改成一样的，也不需要修改很多代码。但是这里的问题根本还是OOP思想，这样就不符合这个思想，若是遇到有些情况，这样便行不通了。不过想来想去还是有点硌着，心里还不是很明白，这就有待于代码量的增加和项目经验的增加慢慢的去了然于心，先记住这样用更好。遇到面试可以用反例去说给面试官听。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈Java OOP和JavaScript OOP-之四--多态(下--JavaScript)</title>
+    <link href="undefined2017/11/24/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E5%9B%9B-%E5%A4%9A%E6%80%81%EF%BC%88%E4%B8%8B-JavaScript%EF%BC%89/"/>
+    <url>2017/11/24/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E5%9B%9B-%E5%A4%9A%E6%80%81%EF%BC%88%E4%B8%8B-JavaScript%EF%BC%89/</url>
+    
+    <content type="html"><![CDATA[<p>在Java的多态里已经讲过多态的基本概念，这里不再赘述。</p><hr><p>由于语言特性的问题，JavaScript多态的实现机制不同于Java，这和JavaScript没有类的，所以略有不同。</p><a id="more"></a><pre><code class="javascript">//先用一个不需要继承实现的多态function sayAge(object) {  if(object instanceof Child){      console.log(&#39;10&#39;);  }else if(object instanceof Parent){      console.log(&#39;30&#39;);  }}sayAge(child);   // &#39;10&#39;sayAge(parent);  // &#39;30&#39;</code></pre><p>这是一个在知乎看到的例子，满足了多态的基本定义。同一操作作用于不同的对象，可以有不同的解释，产生不同的执行结果。</p><hr><p>涉及到继承，直接拿ES6来做对比</p><pre><code class="javascript">class People{  revolt(){    console.log(&quot;revolt&quot;);  }}class Man extends People{  revolt(){    console.log(&quot;给你一拳&quot;)；  }}class Woman extends People{  revolt(){    console.log(&quot;给你一巴掌&quot;)；  }}</code></pre>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈Java OOP和JavaScript OOP 之四--多态(上-Java)</title>
+    <link href="undefined2017/11/22/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E5%9B%9B-%E5%A4%9A%E6%80%81%EF%BC%88%E4%B8%8A--Java%EF%BC%89/"/>
+    <url>2017/11/22/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E5%9B%9B-%E5%A4%9A%E6%80%81%EF%BC%88%E4%B8%8A--Java%EF%BC%89/</url>
+    
+    <content type="html"><![CDATA[<h1 id="什么是多态？"><a href="#什么是多态？" class="headerlink" title="什么是多态？"></a>什么是多态？</h1><blockquote><p>多态：同一操作作用于不同的对象，可以有不同的解释，产生不同的执行结果</p></blockquote><p>这是百度百科的一个解释</p><blockquote><p>多态意味着“多种形态”。在面向对象的编程当中，你有相同的’脸’（基类里一种通用的接口），以及使用该接口的不同的形式：即各种不同的动态绑定方法的版本。</p></blockquote><p>这是Java编程思想里的解释，由此可见，在面向对象编程中多态必须是动态绑定实现的，注意关键词“动态绑定”。这样就直接否定了Java里方法重载是多态的一种实现形式。因为，方法重载是在编译时发生的，也就是“静态绑定”的，所以将不再纠结重载是否是多态的问题。</p><a id="more"></a><hr><p>Java中的多态</p><pre><code class="java">//父类public class People {    public People() {}    public void revolt() {        System.out.println(&quot;revolt&quot;);    }}//子类public class Women extends People {    public Women() {}    //@Override    public void revolt() {        System.out.println(&quot;给你一巴掌&quot;);    }}public class Man extends People {    public Man() {}    //@Override    public void revolt() {        System.out.println(&quot;给你一拳头&quot;);    }}//测试类public class You {    //你有一个打人的方法    public static void play(People people) {        people.revolt();    }    public static void main(String[] args) {        play(new Women());        play(new Man());    }}</code></pre><p>理解：有一天我叫你去打指定的人，然后想看看不同的人有什么不同的反应。这里的重写就是人被你打了都会反抗，但是不同性别的人有不同的反抗。而你事先并不知道那个人会怎么反抗，我指这个你就打这个，我指那个你就打那个。由此引出多态的三要素</p><ul><li>首先被你打的都是人–继承（或接口实现）</li><li>不同的人有不同的反抗方式，但是都会反抗–重写（动态绑定子类方法）</li><li>父类引用指向子类对象（向上转型）</li></ul><p>父类引用指向子类对象（向上转型），这个的作用可以实现如You类里的。不用再为不同的子类型去写相同的执行方式。比如：</p><pre><code class="java">public class You {    //你有一个打人的方法  //这个方法只能打Women    public static void play(Women people) {        people.revolt();    }  //要打Man只能重新定义方法  public static void play(Man people) {        people.revolt();    }  //这样每打一个人就要写一个打一个人的方法，有很多人的时候就很麻烦了    public static void main(String[] args) {        play(new Women());        play(new Man());    }}</code></pre><p>多态的作用</p><blockquote><p>消除数据类型之间的耦合，增加代码的可读性和可扩展性，改善代码的组织结构</p></blockquote><p>理解：有新的子类（人）要添加时，只需重写方法就可以，不会影响其他子类，（你去打的时候）也不用创建新的打人方法，直接去打就可以了。用接口实现道理相同，实现类去实现接口的抽象方法。然后将接口类型引用指向实现类的对象。</p><ul><li>这样就体现出向上转型为编程带来的便捷性。</li></ul><p>但是这样的方式也有一个致命的缺点，比如，人都是会反抗的合乎常理。这里有个酒喝得不省人事的人，他不会反抗，也就是说他有个不反抗的方法，那用向上转型是没法调用的。这里会用到向下转型。先看段代码：</p><pre><code class="java">public class Drunkard extends People {    //这是一个喝醉的人    public Drunkard() {}    //喝多了不还手的方法    public void revoltNot() {        System.out.println(&quot;我喝多了，不还手&quot;)；    }}//你去打他public class You {    //你有一个打人的方法    public static void play(People people) {        people.revolt();    }    public static void main(String[] args) {        play(new Women());        play(new Man());        play(new Drunkard());    }}//这样子的话他还是会调用继承过来的反抗方法，那要调用他喝醉的方法就要把他灌醉，变成喝醉的人。public class You {    //你有一个打喝醉的人的方法    public static void playDrinking(People people) {        ((Drunkard)people).revolt();    }    public static void main(String[] args) {        playDrinking(new Drunkard());    }}</code></pre><p>写到这里发现向下转型用这个例子描述不是特别恰当，下次将重新整理一篇有关类型转换的文章。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈Java OOP和JavaScript OOP 之三--封装</title>
+    <link href="undefined2017/11/21/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%B8%89-%E5%B0%81%E8%A3%85/"/>
+    <url>2017/11/21/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%B8%89-%E5%B0%81%E8%A3%85/</url>
+    
+    <content type="html"><![CDATA[<p>封装是面向对象程序语言对客观世界的模拟，在客观世界中对象的成员变量(用于描述对象的状态数据)都被隐藏在对象内部，外部无法直接操作和修改。<br>对一个类或对象实现良好的封装，可以实现以下目的。</p><blockquote><ul><li>隐藏类的实现细节</li><li>让使用者只能通过事先预定的方法来访问数据，从而可以在该方法里加入控制逻辑，限制对成员变量的不合理访问。</li><li>可进行数据检查，从而有利于保证对象信息的完整性。</li><li>便于修改，提高代码的可维护性。</li></ul></blockquote><a id="more"></a><p>为了实现良好的封装，需要考虑两方面。</p><blockquote><ul><li>将对象的成员变量和实现细节隐藏起来，不允许外部直接访问。</li><li>把方法暴露出来，让方法来控制对这些成员变量进行安全的访问操作。</li></ul></blockquote><p>Java的封装</p><pre><code class="java">public class Person1{  private String name;  private int age;  private String food = &quot;什么都吃&quot;;  public void setName(String name){    this.name = name;  }  public String getName(){    return name;  }  public void setAge(int age){    this.age = age;  }  public int getAge(){    return age;  }  public void eat(){    System.out.println(food);  }}</code></pre><p>一个基本的Java封装，用setter和getter方法操控私有属性。也乐意用构造方法，可以直接传递参数生成实例对象。</p><hr><p>JavaScript的封装</p><pre><code class="javascript">//对象的定义var person1 = {  food: &quot;什么都吃&quot;};person1.name = &quot;Jack&quot;;person1.age = 25;console.log(person1.name);//&quot;Jack&quot;</code></pre><p>person1.name相当于执行了setter和getter的操作,要创建不同的对象要一次次来，没有可复用性可言。</p><pre><code class="javascript">//通过函数调用返回对象function Person(name, age){  return {    name: name,    age: age,    food: &quot;什么都吃&quot;    //eat: function(){    //  console.log(this.food);    //}  }}var person1 = Person(&quot;a&quot;, 28);var person2 = Person(&quot;b&quot;, 22);</code></pre><p>两个对象之间没有什么内在联系</p><pre><code class="javascript">//构造函数的封装function Person(name, age){  this.name = name;  this.age = age;  this.food = &quot;什么都吃&quot;;  this.eat = funciton(){    console.log(this.food);  }}var person1 =new Person(&quot;a&quot;, 28);var person2 =new Person(&quot;b&quot;, 22);</code></pre><p>person1和person2都是Person的实例对象，分别都创建了自己的实例属性，但是两个对象都是Person的实例，他们本来就是“什么都吃”，但是这种方式在实例对象里都有这个属性,甚至创建更多实例对象就会有更多的一样的food属性生成，造成内存的浪费。(eat方法也是一样的的重复创建)</p><pre><code class="javascript">//prototype模式//把共有属性和方法添加到原型上function Person(name, age){  this.name = name;  this.age = age;}Person.prototype.food = &quot;什么都吃&quot;;Person.prototype.eat = function(){  console.log(this.food);}var person1 = new Person(&quot;a&quot;, 28);···var personN </code></pre><p>这里不管创建多少个不相同的Person实例对象，他们都是公用food属性和eat方法，同时也体现了实例之间的关系。就像一个机器，可以不断生产产品，但是编号和出场时间不同。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈Java OOP和JavaScript OOP 之二--继承</title>
+    <link href="undefined2017/11/20/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%BA%8C-%E7%BB%A7%E6%89%BF/"/>
+    <url>2017/11/20/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%BA%8C-%E7%BB%A7%E6%89%BF/</url>
+    
+    <content type="html"><![CDATA[<ul><li>Java继承：用extends关键字，实现SubType继承SuperType</li><li>JavaScript继承：在ES6之前，没有extends关键字，主要靠几种模式实现继承（比如：构造函数继承和原型继承还有组合继承等）。ES6之后可以像Java一样通过extends关键字，不过底层实现还是原型继承。<a id="more"></a></li></ul><hr><p>Java继承</p><pre><code class="java">//Java//父类class SuperType {  String name;  int age;  String job;  String[] friends = {&quot;Jack&quot;, &quot;Mack&quot;, &quot;Salle&quot;}  SuperType(String name, int age, String job){    this.name = name;    this.age = age;    this.job = job;  }  void getPeople(){    System.out.println(this.name + &quot; is &quot; + this.age + &quot; years old&quot; + &quot; and he is a &quot; + this.job);  }  void getFriends(){    System.out.println(this.friends);  }}//子类class SubType extends SuperType {  SubType(String name, int age, String job) {    super(name, age, job);  }  @override  //void getPeople(){}}//Testclass Test {  public static void main(String[] args){    SubType people = new SubType(&quot;Nicholas&quot;, 38, &quot;Software Engineer&quot;);    people.getPeople();    //Nicholas is 38 years old and he is a Software Engineer    people.getFriends();    //[&quot;Jack&quot;, &quot;Mack&quot;, &quot;Salle&quot;]  }}</code></pre><p>JavaScrpt继承</p><ul><li><p>原型链继承</p><pre><code class="javascript">function SuperType (name, age) {  this.name = name;  this.age = age;  this.friends = [&quot;a&quot;, &quot;b&quot;];}SuperType.prototype.say = function(){  console.log(&#39;hello, my name is &#39; + this.name);};SuperType.prototype.sayFriends = function(){  console.log(this.friends);};function SubType() {}SubType.prototype = new SuperType(&#39;Nicholas&#39;);var man1 = new SubType();man1.friends.push(&quot;c&quot;);man1.say(); //hello, my name is Nicholasman1.sayFriends();//[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]var man2 = new SubType();man2.sayFriends();//[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]console.log(man1.say === man2.say);//trueconsole.log(man1.name === man2.name);//true</code></pre><p>事实上这里的man1和man2都是空对象，属性都是顺着原型链往上找到SubType上的name和say方法。由此也导致了实例属性共享，任何一个实例改变属性，都会影响其他实例。所以这种继承并没有很大的作用。</p></li><li><p>利用构造函数继承</p><pre><code class="javascript">function SuperType (name, age) {  this.name = name;  this.age = age;}SuperType.prototype.say = function(){  console.log(&#39;hello, my name is &#39; + this.name);};function SubType(name, age) {  SuperType.apply(this, arguments);}//SubType.prototype = new SuperType(&#39;Nicholas&#39;);var man1 = new SubType(&#39;joe&#39;);var man2 = new SubType(&#39;david&#39;);console.log(man1.name === man2.name);//falseman1.say(); //say is not a function</code></pre><p>这里继承的属性，非常的优雅，但是却无法继承父类型的原型方法。由此就引出组合继承</p></li><li><p>组合继承</p><pre><code class="javascript">function SuperType (name, age) {  this.name = name; this.age = age;}SuperType.prototype.say = function(){  console.log(&#39;hello, my name is &#39; + this.name);};function SubType(name, age) {  SuperType.apply(this, arguments);}SubType.prototype = new SuperType();var man1 = new SubType(&#39;joe&#39;);var man2 = new SubType(&#39;david&#39;);console.log(man1.name === man2.name);//falseconsole.log(man1.say === man2.say);//trueman1.say(); //hello, my name is joe</code></pre><p>这里虽然具备了两种继承特点，但是重复的“继承”了实例属性,性能上有缺陷。并且在应对引用类型实例属性时，还是会共享实例属性</p></li><li><p>寄生组合继承</p><pre><code class="javascript">function SuperType (name, age) {          this.name = name;          this.age = age;      }SuperType.prototype.say = function(){  console.log(&#39;hello, my name is &#39; + this.name);};function SubType(name, age) {  SuperType.apply(this, arguments);}SubType.prototype = Object.create(SuperType.prototype);//a.SubType.prototype.constructor = SubType;//b.var man1 = new SubType(&#39;pursue&#39;);var man2 = new SubType(&#39;joe&#39;);console.log(man1.say == man2.say);console.log(man1.name == man2.name);</code></pre><p>a.创建一个SuperType的原型的副本，并让SubType的原型指向它。由于是一个副本，所以不会向SuperType的应用类型传递，解决了实力属性共享的问题。<br>b.a这一步操作重写了原型，出于严谨或者避免一些特殊的情况，重新指定构造函数</p><pre><code class="javascript">//a相当于function create(obj){  function T(){};  T.prototype = obj;  return new T();}</code></pre></li><li><p>ES6 class继承</p><pre><code class="javascript">class SuperType{  constructor(name,age){      this.name = name;      this.age = age;  }  say(){      console.log(&#39;hello, my name is &#39; + this.name);  }}</code></pre></li></ul><p>class SubType extends SuperType{<br>    constructor(name, age, job){<br>        super(name, age);<br>        this.job = job;<br>    }<br>}<br>```</p><hr><p>所以说，Java的继承更加存粹一些“类-继承”，而JavaScript就算有了class，那也是基于原型的继承模式，从《你不知道的JavaScript》里，作者给出了一个更合理的说法，这是一种委托。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浅谈Java OOP和JavaScript OOP 之一--类</title>
+    <link href="undefined2017/11/01/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%B8%80-%E7%B1%BB/"/>
+    <url>2017/11/01/%E6%B5%85%E8%B0%88Java%20OOP%E5%92%8CJavaScript%20OOP-%E4%B9%8B%E4%B8%80-%E7%B1%BB/</url>
+    
+    <content type="html"><![CDATA[<p>转眼间已参加学习Java有一个星期了，也把自己讨厌Java的心扭转到了热爱的路上，当然最让我着迷的还是JavaScript。慢慢的好像能写一些Java OOP的代码了，对这种纯面向对象语言的学习，一下子打通了我对JavaScript OOP的疑惑，因为互相对比学习，好像也明白了一些Java OOP的所以然。</p><ul><li>Java就是朝着OOP去设计的</li><li>JavaScript可以有很多种编程方式</li><li>在我眼中，Java就是有很悠久历史和规矩的古典乐，而JavaScript就是多变充满激情和套路的摇滚乐。<a id="more"></a></li></ul><hr><p>先来看两段代码</p><pre><code class="java">//Javapublic class SuperType{    String name;    int age;    public SuperType(String name, int age){        this.name = name;        this.age = age;    }    public sayName(){        System.out.println(&quot;Hello, &quot; + this.name);    }}</code></pre><pre><code class="javascript">//JavaScript（ES6）class SuperType{    constructor(name, age){        this.name = name;        this.age = age;    }    sayName(){        console.log(&quot;Hello, &quot; + this.name);    }}</code></pre><p>分析一下，由于JavaScript的ES6内置了classes，所以写出来跟Java视觉上的差距就是只剩下几个关键字的不同了，Java要声明类型，JavaScript不需要，这几乎就是这两门语言的很关键的不同，也决定了Java是“强”，JavaScript是“弱”。<br>Java里有一个SuperType（）构造方法和sayName()普通方法，JavaScript里有构造函数和sayName（）方法，这里JavaScript里与Java不同的地方：</p><ul><li>JavaScript里方法也都是函数（Function）</li><li>Java的方法定义在类里面</li><li>JavaScript的方法看似是定义在“类”里面，实则还是<pre><code class="javascript">SuperType.prototype.sayName = function(){...}</code></pre>所以JavaScript的类只是ES6的语法糖，内部实现还是基于原型的，这里的类也不是真的类，到底还是一个构造函数。</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java</category>
+      
+      <category>OOP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>OOP</tag>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>更换Github账号后&#39;git push&#39;和&#39;hexo d -g&#39;遇到的问题总结</title>
+    <link href="undefined2017/10/22/%E6%9B%B4%E6%8D%A2Github%E8%B4%A6%E5%8F%B7%E5%90%8E-git-push-%E5%92%8C-hexo-d-g-%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/"/>
+    <url>2017/10/22/%E6%9B%B4%E6%8D%A2Github%E8%B4%A6%E5%8F%B7%E5%90%8E-git-push-%E5%92%8C-hexo-d-g-%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</url>
+    
+    <content type="html"><![CDATA[<p>遇到问题多思考，多用搜索引擎，问题总归会解决的，不要轻易放弃</p><a id="more"></a><h2 id="问题起因"><a href="#问题起因" class="headerlink" title="问题起因"></a>问题起因</h2><p>由于之前Github账号过于随便的问题，重新注册了Github账号。</p><h2 id="场景回顾"><a href="#场景回顾" class="headerlink" title="场景回顾"></a>场景回顾</h2><p>既然账号都换了，那就博客也重新来吧，之前的反正也是测试用的。<br>于是乎，做好所有准备工作，开干。</p><pre><code class="bush">$ git config --global user.name &quot;xxx&quot; $ git config --global user.email &quot;xxxx@xxx.com&quot;</code></pre><p>正常</p><hr><p>查看git配置</p><pre><code class="bush">$ git config --lis</code></pre><p>好像也没有问题</p><hr><p>生成SSH密钥</p><pre><code class="bush">$ ssh-keygen -t rsa -C &quot;xxxxx@xxx.com&quot;</code></pre><p>生成密钥</p><pre><code class="bush">$ cat ~/.ssh/id_rsa.pub</code></pre><p>出现</p><pre><code class="bush">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJPPudl9XqGxHvhs144OIIigWTy3MHD9jkM4bMm7HROEhj/qPUsin/td/YcsXx2HQI4JWTWmQwWD6YqlCx/rwltsYFkmm7OoNqe6kmnt5QRyWyUHX0EAFb/jz7rhA4+B0INHlcIfWlEI8ccnz28UFTwdHbx8JDWOn86ex/nNshDbz+Okc9LREKHt7uamo7WFCO30iCAKQY1bfvqOckTpNnQbFetl+8IJOCa/+q4ISghMB8GzAvdYw5e/SnJPDgMmjx8WO1FBhcpG2eiP4ij1kxeR01zl4B3EXG1o9vtWFXmNYTH7Y64b0tlkynCK1N/DIn9+iQ7wVEJg7AyvUpBhdz xxxxxxxx@xx.com</code></pre><p>让后把这段内容复制进Github里相应位置</p><hr><p>然后测试有没有链接成功</p><pre><code class="bush">$ ssh git@github.com</code></pre><p>根据输出的内容发现好像也成功了</p><h4 id="至此一切正常"><a href="#至此一切正常" class="headerlink" title="至此一切正常"></a>至此一切正常</h4><hr><p>最后省略Hexo的相关操作，假设你也都已经完成，来到最后一步发布</p><pre><code class="bush">$ hexo d -g </code></pre><p>出人意料的出现一大串的内容，当然是报错了。其中包含关键的一段</p><pre><code class="bush">remote: Permission to new-name/practice.git denied to old-name.fatal: unable to access &#39;https://github.com/new-name/origin.git/&#39;: The requested URL returned error: 403</code></pre><p>然后也是各种Goole各种百度，就是没有找到相关的解决办法，乱试一通结果还是不行，包括Github官方给出的解答，好像也没有解决问题，最后功夫不负有心人，我翻到一篇博客，看了一下，大概是本地凭证的问题，我受挫的小心脏那么一琢磨，哎呀，好像有点对路。试试把</p><blockquote><p>控制面板-用户账户-凭据管理器-Windows凭据</p></blockquote><h4 id="可以看到-git-https-github-com"><a href="#可以看到-git-https-github-com" class="headerlink" title="可以看到 git:https://github.com"></a>可以看到 git:<a href="https://github.com" target="_blank" rel="noopener">https://github.com</a></h4><h4 id="点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了"><a href="#点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了" class="headerlink" title="点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了"></a>点开可以看到一个账号，那个是旧的账户。点击编辑，修改为现在的账户和密码就可以了</h4><hr><p>最后再次执行 hexo d -g 就成功了，同样的也解决了git push失败的问题。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>问题总结</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Hexo</tag>
+      
+      <tag>Github</tag>
+      
+      <tag>git</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
   
 </search>

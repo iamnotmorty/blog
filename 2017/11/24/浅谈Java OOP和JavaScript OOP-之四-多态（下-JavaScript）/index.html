@@ -14,7 +14,7 @@
   <meta name="description" content>
   <meta name="author" content="Johnny">
   <meta name="keywords" content>
-  <title>标签 ~ Boogie</title>
+  <title>浅谈Java OOP和JavaScript OOP-之四--多态(下--JavaScript) ~ Boogie</title>
   <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
   <link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css">
@@ -30,7 +30,7 @@
 
 
 <body>
-  <header style="height: 80vh;">
+  <header style="height: 70vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -101,6 +101,9 @@
             </span>
 
             
+              <br>
+              <p>星期五, 十一月 24日 2017, 4:03 下午</p>
+            
           </div>
 
           
@@ -111,22 +114,105 @@
 
   <main>
     
-      <div class="container nopadding-md">
-        <div class="py-5 z-depth-3" id="board">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center tagcloud">
-  <a href="/blog/tags/Github/" style="font-size: 15px; color: #bbe">Github</a> <a href="/blog/tags/Hexo/" style="font-size: 18.75px; color: #99abe0">Hexo</a> <a href="/blog/tags/JVM/" style="font-size: 15px; color: #bbe">JVM</a> <a href="/blog/tags/Java/" style="font-size: 30px; color: #337ab7">Java</a> <a href="/blog/tags/JavaScript/" style="font-size: 22.5px; color: #779bd3">JavaScript</a> <a href="/blog/tags/OOP/" style="font-size: 26.25px; color: #558ac5">OOP</a> <a href="/blog/tags/Travis-CI/" style="font-size: 15px; color: #bbe">Travis CI</a> <a href="/blog/tags/git/" style="font-size: 15px; color: #bbe">git</a> <a href="/blog/tags/实际开发过程遇到的问题/" style="font-size: 15px; color: #bbe">实际开发过程遇到的问题</a>
-</div>
-              </div>
-            </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto">
+          <div class="markdown-body">
+            <p>在Java的多态里已经讲过多态的基本概念，这里不再赘述。</p>
+<hr>
+<p>由于语言特性的问题，JavaScript多态的实现机制不同于Java，这和JavaScript没有类的，所以略有不同。</p>
+<a id="more"></a>
+<pre><code class="javascript">//先用一个不需要继承实现的多态
+function sayAge(object) {
+  if(object instanceof Child){
+      console.log(&#39;10&#39;);
+  }else if(object instanceof Parent){
+      console.log(&#39;30&#39;);
+  }
+}
+
+sayAge(child);   // &#39;10&#39;
+sayAge(parent);  // &#39;30&#39;</code></pre>
+<p>这是一个在知乎看到的例子，满足了多态的基本定义。同一操作作用于不同的对象，可以有不同的解释，产生不同的执行结果。</p>
+<hr>
+<p>涉及到继承，直接拿ES6来做对比</p>
+<pre><code class="javascript">class People{
+  revolt(){
+    console.log(&quot;revolt&quot;);
+  }
+}
+
+class Man extends People{
+  revolt(){
+    console.log(&quot;给你一拳&quot;)；
+  }
+}
+
+class Woman extends People{
+  revolt(){
+    console.log(&quot;给你一巴掌&quot;)；
+  }
+}</code></pre>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            
+              <p>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Java">Java</a>
+                  &nbsp;
+                
+                  <a class="hover-with-bg" href="/categories/OOP">OOP</a>
+                  &nbsp;
+                
+              </p>
+            
+            <p>
+              <i class="iconfont icon-tag"></i>
+              
+                <a class="hover-with-bg" href="/tags/Java">Java</a>
+              
+                <a class="hover-with-bg" href="/tags/OOP">OOP</a>
+              
+                <a class="hover-with-bg" href="/tags/JavaScript">JavaScript</a>
+              
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
           </div>
         </div>
       </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;目录</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
     
   </main>
 
@@ -180,6 +266,11 @@
   <script src="/blog/js/lazyload.js" ></script>
 
 
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
 
   <script src="/blog/lib/prettify/prettify.min.js" ></script>
   <script>
@@ -195,7 +286,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "标签&nbsp;",
+        "浅谈Java OOP和JavaScript OOP-之四--多态(下--JavaScript)&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

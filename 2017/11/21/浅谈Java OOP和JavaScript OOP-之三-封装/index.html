@@ -14,7 +14,7 @@
   <meta name="description" content>
   <meta name="author" content="Johnny">
   <meta name="keywords" content>
-  <title>标签 ~ Boogie</title>
+  <title>浅谈Java OOP和JavaScript OOP 之三--封装 ~ Boogie</title>
   <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
   <link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css">
@@ -30,7 +30,7 @@
 
 
 <body>
-  <header style="height: 80vh;">
+  <header style="height: 70vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -101,6 +101,9 @@
             </span>
 
             
+              <br>
+              <p>星期二, 十一月 21日 2017, 1:11 下午</p>
+            
           </div>
 
           
@@ -111,22 +114,159 @@
 
   <main>
     
-      <div class="container nopadding-md">
-        <div class="py-5 z-depth-3" id="board">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center tagcloud">
-  <a href="/blog/tags/Github/" style="font-size: 15px; color: #bbe">Github</a> <a href="/blog/tags/Hexo/" style="font-size: 18.75px; color: #99abe0">Hexo</a> <a href="/blog/tags/JVM/" style="font-size: 15px; color: #bbe">JVM</a> <a href="/blog/tags/Java/" style="font-size: 30px; color: #337ab7">Java</a> <a href="/blog/tags/JavaScript/" style="font-size: 22.5px; color: #779bd3">JavaScript</a> <a href="/blog/tags/OOP/" style="font-size: 26.25px; color: #558ac5">OOP</a> <a href="/blog/tags/Travis-CI/" style="font-size: 15px; color: #bbe">Travis CI</a> <a href="/blog/tags/git/" style="font-size: 15px; color: #bbe">git</a> <a href="/blog/tags/实际开发过程遇到的问题/" style="font-size: 15px; color: #bbe">实际开发过程遇到的问题</a>
-</div>
-              </div>
-            </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto">
+          <div class="markdown-body">
+            <p>封装是面向对象程序语言对客观世界的模拟，在客观世界中对象的成员变量(用于描述对象的状态数据)都被隐藏在对象内部，外部无法直接操作和修改。<br>对一个类或对象实现良好的封装，可以实现以下目的。</p>
+<blockquote>
+<ul>
+<li>隐藏类的实现细节</li>
+<li>让使用者只能通过事先预定的方法来访问数据，从而可以在该方法里加入控制逻辑，限制对成员变量的不合理访问。</li>
+<li>可进行数据检查，从而有利于保证对象信息的完整性。</li>
+<li>便于修改，提高代码的可维护性。</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<p>为了实现良好的封装，需要考虑两方面。</p>
+<blockquote>
+<ul>
+<li>将对象的成员变量和实现细节隐藏起来，不允许外部直接访问。</li>
+<li>把方法暴露出来，让方法来控制对这些成员变量进行安全的访问操作。</li>
+</ul>
+</blockquote>
+<p>Java的封装</p>
+<pre><code class="java">public class Person1{
+  private String name;
+  private int age;
+  private String food = &quot;什么都吃&quot;;
+  public void setName(String name){
+    this.name = name;
+  }
+  public String getName(){
+    return name;
+  }
+  public void setAge(int age){
+    this.age = age;
+  }
+  public int getAge(){
+    return age;
+  }
+  public void eat(){
+    System.out.println(food);
+  }
+}</code></pre>
+<p>一个基本的Java封装，用setter和getter方法操控私有属性。也乐意用构造方法，可以直接传递参数生成实例对象。</p>
+<hr>
+<p>JavaScript的封装</p>
+<pre><code class="javascript">//对象的定义
+var person1 = {
+  food: &quot;什么都吃&quot;
+};
+person1.name = &quot;Jack&quot;;
+person1.age = 25;
+console.log(person1.name);//&quot;Jack&quot;</code></pre>
+<p>person1.name相当于执行了setter和getter的操作,要创建不同的对象要一次次来，没有可复用性可言。</p>
+<pre><code class="javascript">//通过函数调用返回对象
+function Person(name, age){
+  return {
+    name: name,
+    age: age,
+    food: &quot;什么都吃&quot;
+    //eat: function(){
+    //  console.log(this.food);
+    //}
+  }
+}
+var person1 = Person(&quot;a&quot;, 28);
+var person2 = Person(&quot;b&quot;, 22);</code></pre>
+<p>两个对象之间没有什么内在联系</p>
+<pre><code class="javascript">//构造函数的封装
+function Person(name, age){
+  this.name = name;
+  this.age = age;
+  this.food = &quot;什么都吃&quot;;
+  this.eat = funciton(){
+    console.log(this.food);
+  }
+}
+var person1 =new Person(&quot;a&quot;, 28);
+var person2 =new Person(&quot;b&quot;, 22);</code></pre>
+<p>person1和person2都是Person的实例对象，分别都创建了自己的实例属性，但是两个对象都是Person的实例，他们本来就是“什么都吃”，但是这种方式在实例对象里都有这个属性,甚至创建更多实例对象就会有更多的一样的food属性生成，造成内存的浪费。(eat方法也是一样的的重复创建)</p>
+<pre><code class="javascript">//prototype模式
+//把共有属性和方法添加到原型上
+function Person(name, age){
+  this.name = name;
+  this.age = age;
+}
+Person.prototype.food = &quot;什么都吃&quot;;
+Person.prototype.eat = function(){
+  console.log(this.food);
+}
+var person1 = new Person(&quot;a&quot;, 28);
+···
+var personN </code></pre>
+<p>这里不管创建多少个不相同的Person实例对象，他们都是公用food属性和eat方法，同时也体现了实例之间的关系。就像一个机器，可以不断生产产品，但是编号和出场时间不同。</p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            
+              <p>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Java">Java</a>
+                  &nbsp;
+                
+                  <a class="hover-with-bg" href="/categories/OOP">OOP</a>
+                  &nbsp;
+                
+              </p>
+            
+            <p>
+              <i class="iconfont icon-tag"></i>
+              
+                <a class="hover-with-bg" href="/tags/Java">Java</a>
+              
+                <a class="hover-with-bg" href="/tags/OOP">OOP</a>
+              
+                <a class="hover-with-bg" href="/tags/JavaScript">JavaScript</a>
+              
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
           </div>
         </div>
       </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;目录</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
     
   </main>
 
@@ -180,6 +320,11 @@
   <script src="/blog/js/lazyload.js" ></script>
 
 
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
 
   <script src="/blog/lib/prettify/prettify.min.js" ></script>
   <script>
@@ -195,7 +340,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "标签&nbsp;",
+        "浅谈Java OOP和JavaScript OOP 之三--封装&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

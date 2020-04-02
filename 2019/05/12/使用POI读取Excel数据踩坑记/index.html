@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/blog/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="author" content="Johnny">
+  <meta name="keywords" content>
+  <title>使用POI读取Excel数据踩坑记 ~ Boogie</title>
+  <link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/blog/lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/blog/lib/mdbootstrap/css/mdb.min.css">
+  <link rel="stylesheet" href="/blog/lib/github-markdown/github-markdown.min.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+  
+    <link rel="stylesheet" href="/blog/lib/prettify/tomorrow-night-eighties.min.css">
+  
+  <link rel="stylesheet" href="/blog/css/main.css">
+
+  
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/blog/">&nbsp;<strong>Boogie</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/">首页</a>
+          </li>
+        
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/archives/">文章</a>
+          </li>
+        
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/categories/">分类</a>
+          </li>
+        
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/tags/">标签</a>
+          </li>
+        
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+</nav>
+
+    <div class="view intro-2"
+         style="background: url('https://s2.ax1x.com/2019/09/29/u8ZeF1.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              <p>星期日, 五月 12日 2019, 4:08 下午</p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto">
+          <div class="markdown-body">
+            <h1 id="Spring-Boot项目使用Apache-POI读取Excel文件数据"><a href="#Spring-Boot项目使用Apache-POI读取Excel文件数据" class="headerlink" title="Spring Boot项目使用Apache POI读取Excel文件数据"></a>Spring Boot项目使用Apache POI读取Excel文件数据</h1><a id="more"></a>
+<hr>
+<h2 id="第一、导入依赖"><a href="#第一、导入依赖" class="headerlink" title="第一、导入依赖"></a>第一、导入依赖</h2><pre><code class="xml">      &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+        &lt;artifactId&gt;poi&lt;/artifactId&gt;
+        &lt;version&gt;4.0.1&lt;/version&gt;
+      &lt;/dependency&gt;</code></pre>
+<p>这里有一个地方需要注意，这个包只能支持xls格式的Excel文件。但是2003年以后，我们现在常用的格式是xlsx格式的文件。所以要正常使用的话还需导入另一个依赖。</p>
+<pre><code class="xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+      &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
+      &lt;version&gt;4.0.1&lt;/version&gt;
+    &lt;/dependency&gt;</code></pre>
+<p>导入这两个依赖以后就可以使用POI相关的API了。</p>
+<h2 id="第二、使用"><a href="#第二、使用" class="headerlink" title="第二、使用"></a>第二、使用</h2><p>直接上代码</p>
+<pre><code class="java">@RequestController
+@RequestMapping(&quot;/file&quot;)
+public class Controller {
+    @PostMapping(&quot;/parse.json&quot;)
+    /**这里直接返回为空（根据需求），关键是里面的代码不是返回什么。
+    *用@RequestParam注解接收参数，对象为
+    *org.springframework.web.multipart.MultipartFile
+    */
+    public void parse(@RequestParam MultipartFile file) {
+        //检查文件
+        checkFile(file);
+        //获取workbook对象
+        Workbook workbook = getWorkBook(file);
+        //获取sheet对象
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+            //在这里就可以获取cell对象，从而读取Excel的数据了
+            Cell cell = row.getCell(0);
+            //cell.getStringCellValue();
+            //cell.getNumericCellValue();
+            //...等等方法
+        }
+    }
+
+    public static void checkFile(MultipartFile file) throws IOException {
+        //判断文件是否存在
+        if (null == file) {
+            logger.error(&quot;文件不存在！&quot;);
+            throw new FileNotFoundException(&quot;文件不存在！&quot;);
+        }
+        //获得文件名
+        String fileName = file.getOriginalFilename();
+        //判断文件是否是excel文件
+        if (!fileName.endsWith(&quot;xls&quot;) &amp;&amp; !fileName.endsWith(&quot;xlsx&quot;)) {
+            logger.error(fileName + &quot;不是excel文件&quot;);
+            throw new IOException(fileName + &quot;不是excel文件&quot;);
+        }
+    }
+
+    public static Workbook getWorkbook(MultipartFile file) {
+        //获得文件名
+        String fileName = file.getOriginalFilename();
+        //创建Workbook工作薄对象，表示整个excel
+        Workbook workbook = null;
+        try {
+            //获取excel文件的io流
+            InputStream is = file.getInputStream();
+            //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
+            if (fileName.endsWith(&quot;xls&quot;)) {
+                //2003
+                workbook = new HSSFWorkbook(is);
+            } else if (fileName.endsWith(&quot;xlsx&quot;)) {
+                //2007
+                workbook = new XSSFWorkbook(is);
+            }
+        } catch (IOException e) {
+            logger.info(e.getMessage());
+        }
+        return workbook;
+    }
+}</code></pre>
+<p>大致过程是这样，具体有些还需要根据场景</p>
+<h2 id="第三、遇到的坑"><a href="#第三、遇到的坑" class="headerlink" title="第三、遇到的坑"></a>第三、遇到的坑</h2><h3 id="（一）getLastRowNum-方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows-获取的是n行。注：标题行会忽略"><a href="#（一）getLastRowNum-方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows-获取的是n行。注：标题行会忽略" class="headerlink" title="（一）getLastRowNum()方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows()获取的是n行。注：标题行会忽略"></a>（一）getLastRowNum()方法获取行数的问题这里是n-1行，而getPhysicalNumberOfRows()获取的是n行。注：标题行会忽略</h3><h3 id="（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。"><a href="#（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。" class="headerlink" title="（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。"></a>（二）注意获取值的时候的格式，这里又有一个坑就是服务器环境系统不同，单元格类型会有差异。解决的想法是，统一写入格式零时存入本地在读取。</h3><h3 id="（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。"><a href="#（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。" class="headerlink" title="（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。"></a>（三）跨服务存取，如果直接传递数据流有可能会丢失。所以最好还是临时存入本地，再获取数据流。</h3>
+            <hr>
+          </div>
+          <br>
+          <div>
+            
+            <p>
+              <i class="iconfont icon-tag"></i>
+              
+                <a class="hover-with-bg" href="/tags/%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98">实际开发过程遇到的问题</a>
+              
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;目录</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+    <br>
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/blog/lib/jquery/jquery.min.js" ></script>
+<script src="/blog/lib/popper/popper.min.js" ></script>
+<script src="/blog/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/blog/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/blog/js/main.js" ></script>
+
+  <script src="/blog/js/lazyload.js" ></script>
+
+
+  
+    <script src="/blog/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/blog/js/post.js" ></script>
+
+
+  <script src="/blog/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint linenums');
+      prettyPrint();
+    })
+  </script>
+
+
+  <script src="/blog/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "使用POI读取Excel数据踩坑记&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+  <script src="/blog/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/blog/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+</body>
+</html>
