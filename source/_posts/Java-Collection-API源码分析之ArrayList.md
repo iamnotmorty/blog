@@ -4,8 +4,6 @@ date: 2019-06-16 01:29:12
 tags: - Java
 ---
 # ArrayList源码分析-JDK1.8
-## 通常要先来一个类图，但是我觉得这些继承和实现关系，能打开源码看看就清清楚楚了，何必多此一举，更何况idea还能直接生成类图。
-## 看源码的方式呢，我们都从平常使用的角度入手
 <!-- more -->
 ### 好，先来第一段代码
 ```java
@@ -71,4 +69,4 @@ private static int hugaCapacity(int minCapacity) {
     return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
 }
 ```
-个人认为整个数据结构，最关键的就是这个扩容机制。因为数组是不可变的，所以封装成ArrayList以方便项目中的使用。
+整个数据结构，最关键的就是这个扩容机制。因为数组是不可变的，所以封装成ArrayList以方便项目中的使用。
